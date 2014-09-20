@@ -26,6 +26,5 @@ func (a *App) Use(mw ...alice.Constructor) {
 // Listen on `addr`.
 func (a *App) Listen(addr string) error {
 	handler := a.chain.Then(a)
-	http.Handle("/", handler)
-	return http.ListenAndServe(addr, nil)
+	return http.ListenAndServe(addr, handler)
 }
