@@ -25,34 +25,33 @@ func (a *App) Use(mw ...alice.Constructor) {
 
 // Head will register a pattern with a handler for HEAD requests.
 func (a *App) Head(pat string, h interface{}) {
-	a.Add("HEAD", pat, handler(h))
+	a.PatternServeMux.Head(pat, handler(h))
 }
 
 // Get will register a pattern with a handler for GET requests.
 // It also registers pat for HEAD requests.
 func (a *App) Get(pat string, h interface{}) {
-	a.Add("HEAD", pat, handler(h))
-	a.Add("GET", pat, handler(h))
+	a.PatternServeMux.Get(pat, handler(h))
 }
 
 // Post will register a pattern with a handler for POST requests.
 func (a *App) Post(pat string, h interface{}) {
-	a.Add("POST", pat, handler(h))
+	a.PatternServeMux.Post(pat, handler(h))
 }
 
 // Put will register a pattern with a handler for PUT requests.
 func (a *App) Put(pat string, h interface{}) {
-	a.Add("PUT", pat, handler(h))
+	a.PatternServeMux.Put(pat, handler(h))
 }
 
 // Del will register a pattern with a handler for DELETE requests.
 func (a *App) Del(pat string, h interface{}) {
-	a.Add("DELETE", pat, handler(h))
+	a.PatternServeMux.Del(pat, handler(h))
 }
 
 // Options will register a pattern with a handler for OPTIONS requests.
 func (a *App) Options(pat string, h interface{}) {
-	a.Add("OPTIONS", pat, handler(h))
+	a.PatternServeMux.Options(pat, handler(h))
 }
 
 // Listen on `addr`.
