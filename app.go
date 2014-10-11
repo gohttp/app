@@ -3,6 +3,7 @@ package app
 import "github.com/justinas/alice"
 import "github.com/bmizerany/pat"
 import "net/http"
+import "net"
 
 // Application.
 type App struct {
@@ -59,6 +60,13 @@ func (a *App) Listen(addr string) error {
 	handler := a.chain.Then(a)
 	http.Handle("/", handler)
 	return http.ListenAndServe(addr, nil)
+}
+
+// Serve with net.listener
+func (a *App) Serve(l net.Listener) error {
+	handler := a.chain.Then(a)
+	http.Handle("/", handler)
+	return http.Serve(l, handler)
 }
 
 // coerce handler into an http.Handler.
