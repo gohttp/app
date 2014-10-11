@@ -66,7 +66,7 @@ func (a *App) Listen(addr string) error {
 func (a *App) Serve(l net.Listener) error {
 	handler := a.chain.Then(a)
 	http.Handle("/", handler)
-	return http.Serve(l, handler)
+	return http.Serve(l, nil)
 }
 
 // coerce handler into an http.Handler.
