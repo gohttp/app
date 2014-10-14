@@ -5,9 +5,9 @@
 
  View the [docs](http://godoc.org/github.com/gohttp/app).
 
-### examples
+## Examples
 
-* [todo](https://github.com/tarrsalah/gohttp-todo-example)
+* [tarrsalah/gohttp-todo-example](https://github.com/tarrsalah/gohttp-todo-example)
 
 # License
 
