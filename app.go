@@ -56,9 +56,15 @@ func (a *App) Options(pat string, h interface{}) {
 
 // Listen on `addr`.
 func (a *App) Listen(addr string) error {
-	handler := a.chain.Then(a)
+	handler := a.chain.Then(a.PatternServeMux)
 	http.Handle("/", handler)
 	return http.ListenAndServe(addr, nil)
+}
+
+// ServeHTTP implements http.Handler
+func (a *App) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	handler := a.chain.Then(a.PatternServeMux)
+	handler.ServeHTTP(w, r)
 }
 
 // coerce handler into an http.Handler.

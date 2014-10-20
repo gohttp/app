@@ -1,12 +1,13 @@
 package app
 
 import (
-	. "github.com/franela/go-supertest"
-	. "github.com/franela/goblin"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	. "github.com/franela/go-supertest"
+	. "github.com/franela/goblin"
 )
 
 func TestApp(t *testing.T) {
