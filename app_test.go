@@ -1,87 +1,111 @@
 package app
 
-import (
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"testing"
+import . "github.com/franela/go-supertest"
+import "net/http/httptest"
+import "net/http"
+import "testing"
+import "fmt"
 
-	. "github.com/franela/go-supertest"
-	. "github.com/franela/goblin"
-)
+// test GET
+func TestGet(t *testing.T) {
+	app := New()
 
-func TestApp(t *testing.T) {
-	g := Goblin(t)
-
-	a := New()
-	a.Head("/", sayhi)
-	a.Get("/", sayhi)
-	a.Post("/", echo)
-	a.Put("/", echo)
-	a.Del("/", echo)
-	a.Options("/", sayhi)
-
-	testApp(a, g, "app")
-}
-
-const hi = "hi"
-
-func sayhi(w http.ResponseWriter, req *http.Request) {
-	w.Write([]byte(hi))
-}
-
-func echo(w http.ResponseWriter, req *http.Request) {
-	defer req.Body.Close()
-	b, _ := ioutil.ReadAll(req.Body)
-	w.Write(b)
-}
-
-func testApp(a *App, g *G, name string) {
-	server := httptest.NewServer(a)
-	defer server.Close()
-
-	describe := g.Describe
-	it := g.It
-
-	describe(name, func() {
-		it("HEAD should respond 200", func(done Done) {
-			NewRequest(server.URL).
-				Head("/").
-				Expect(200, done)
-		})
-
-		it("GET should say hi with status 200", func(done Done) {
-			NewRequest(server.URL).
-				Get("/").
-				Expect(200, hi, done)
-		})
-
-		it("POST should respond ok with status 200", func(done Done) {
-			NewRequest(server.URL).
-				Post("/").
-				Send("ok").
-				Expect(200, "ok", done)
-		})
-
-		it("PUT should respond ok with status 200", func(done Done) {
-			NewRequest(server.URL).
-				Put("/").
-				Send("ok").
-				Expect(200, "ok", done)
-		})
-
-		it("DELETE should respond ok with status 200", func(done Done) {
-			NewRequest(server.URL).
-				Delete("/").
-				Send("ok").
-				Expect(200, "ok", done)
-		})
-
-		it("OPTIONS should say hi with status 200", func(done Done) {
-			NewRequest(server.URL).
-				Options("/").
-				Send(hi).
-				Expect(200, hi, done)
-		})
+	app.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello"))
 	})
+
+	s := httptest.NewServer(app)
+
+	NewRequest(s.URL).
+		Get("/").
+		Expect(200, "hello")
+}
+
+// test HEAD
+func TestHead(t *testing.T) {
+	app := New()
+
+	app.Head("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello"))
+	})
+
+	s := httptest.NewServer(app)
+
+	NewRequest(s.URL).
+		Head("/").
+		Expect(200)
+}
+
+// test HEAD for GET route
+func TestHeadGet(t *testing.T) {
+	app := New()
+
+	app.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello"))
+	})
+
+	s := httptest.NewServer(app)
+
+	NewRequest(s.URL).
+		Head("/").
+		Expect(200)
+}
+
+// test route precedence
+func TestPrecedence(t *testing.T) {
+	app := New()
+
+	app.Get("/foo", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello"))
+	})
+
+	app.Get("/foo", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("world"))
+	})
+
+	s := httptest.NewServer(app)
+
+	NewRequest(s.URL).
+		Get("/foo").
+		Expect(200, "hello")
+}
+
+// test many routes
+func TestMany(t *testing.T) {
+	app := New()
+
+	app.Get("/foo", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("hello"))
+	})
+
+	app.Get("/bar", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("world"))
+	})
+
+	s := httptest.NewServer(app)
+
+	NewRequest(s.URL).
+		Get("/foo").
+		Expect(200, "hello")
+
+	NewRequest(s.URL).
+		Get("/bar").
+		Expect(200, "world")
+}
+
+// test params
+func TestParams(t *testing.T) {
+	app := New()
+
+	app.Get("/user/:name/pet/:pet", func(w http.ResponseWriter, r *http.Request) {
+		name := r.URL.Query().Get(":name")
+		pet := r.URL.Query().Get(":pet")
+		fmt.Fprint(w, "user %s's pet %s", name, pet)
+	})
+
+	s := httptest.NewServer(app)
+
+	NewRequest(s.URL).
+		Get("/user/tobi/pet/loki").
+		Expect(200, "user tobi's pet loki")
 }
