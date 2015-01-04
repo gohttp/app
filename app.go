@@ -24,34 +24,34 @@ func (a *App) Use(mw ...alice.Constructor) {
 }
 
 // Head will register a pattern with a handler for HEAD requests.
-func (a *App) Head(pat string, h interface{}) {
-	a.mux.Head(pat, handler(h))
+func (a *App) Head(path string, h interface{}) {
+	a.mux.Head(path, handler(h))
 }
 
 // Get will register a pattern with a handler for GET requests.
-// It also registers pat for HEAD requests.
-func (a *App) Get(pat string, h interface{}) {
-	a.mux.Get(pat, handler(h))
+// The handler given is also registered for HEAD requests.
+func (a *App) Get(path string, h interface{}) {
+	a.mux.Get(path, handler(h))
 }
 
 // Post will register a pattern with a handler for POST requests.
-func (a *App) Post(pat string, h interface{}) {
-	a.mux.Post(pat, handler(h))
+func (a *App) Post(path string, h interface{}) {
+	a.mux.Post(path, handler(h))
 }
 
 // Put will register a pattern with a handler for PUT requests.
-func (a *App) Put(pat string, h interface{}) {
-	a.mux.Put(pat, handler(h))
+func (a *App) Put(path string, h interface{}) {
+	a.mux.Put(path, handler(h))
 }
 
 // Del will register a pattern with a handler for DELETE requests.
-func (a *App) Del(pat string, h interface{}) {
-	a.mux.Del(pat, handler(h))
+func (a *App) Del(path string, h interface{}) {
+	a.mux.Del(path, handler(h))
 }
 
 // Options will register a pattern with a handler for OPTIONS requests.
-func (a *App) Options(pat string, h interface{}) {
-	a.mux.Options(pat, handler(h))
+func (a *App) Options(path string, h interface{}) {
+	a.mux.Options(path, handler(h))
 }
 
 // Listen on `addr`.
