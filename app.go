@@ -54,6 +54,16 @@ func (a *App) Options(path string, h interface{}) {
 	a.mux.Options(path, handler(h))
 }
 
+// Patch will register a pattern with a handler for PATCH requests.
+func (a *App) Patch(path string, h interface{}) {
+	a.mux.Patch(path, handler(h))
+}
+
+// Add will register a pattern with a handler for specified method requests.
+func (a *App) Add(method, path string, h interface{}) {
+	a.mux.Add(method, path, handler(h))
+}
+
 // Listen on `addr`.
 func (a *App) Listen(addr string) error {
 	handler := a.chain.Then(a.mux)
